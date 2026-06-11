@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Início — Torneio Terras da Nóbrega 2026</title>
+<meta name="description" content="Torneio Terras da Nóbrega 2026 · Futebol Sub-13 · 20 de junho · Estádio Municipal de Ponte da Barca · AD Ponte da Barca">
+<link rel="icon" href="assets/adpb.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<div class="topbar"><div class="topbar-inner">
+  <img src="assets/crest.png" alt="Emblema Torneio Terras da Nóbrega">
+  <div class="brand">
+    <div class="t1">TORNEIO <span>TERRAS DA NÓBREGA</span></div>
+    <div class="t2">AD Ponte da Barca · Futebol Sub-13 · 20 junho 2026</div>
+  </div>
+</div></div>
+<nav><div class="nav-inner"><a href="index.html" class="on">Início</a><a href="historia.html" class="">História</a><a href="edicao-2026.html" class="">Edição 2026</a><a href="resultados.html" class="">Resultados</a><a href="regulamento.html" class="">Regulamento</a><a href="informacoes.html" class="">Informações Úteis</a><a href="onde-comer.html" class="">Onde Comer</a><a href="parceiros.html" class="">Parceiros</a><a href="contactos.html" class="">Contactos</a></div></nav>
+<main>
+
+<div class="hero">
+  <div class="hero-text">
+    <div class="eyebrow">Estádio Municipal de Ponte da Barca</div>
+    <h1>TORNEIO<br><span>TERRAS DA NÓBREGA</span></h1>
+    <div class="lead">Futebol Sub-13 (9x9) · 12 equipas · 26 jogos · 1 dia de festa do futebol jovem no coração do Alto Minho.</div>
+    <div class="count" id="count">
+      <div class="unit"><div class="num" id="cd-d">—</div><div class="lbl">Dias</div></div>
+      <div class="unit"><div class="num" id="cd-h">—</div><div class="lbl">Horas</div></div>
+      <div class="unit"><div class="num" id="cd-m">—</div><div class="lbl">Min</div></div>
+      <div class="unit"><div class="num" id="cd-s">—</div><div class="lbl">Seg</div></div>
+    </div>
+    <a class="btn" href="resultados.html">Resultados ao Vivo</a>
+    &nbsp;
+    <a class="btn ghost" style="border-color:#fff;color:#fff" href="edicao-2026.html">Ver Equipas</a>
+  </div>
+  <div class="hero-img"><img src="assets/crest.png" alt="Emblema do Torneio"></div>
+</div>
+
+<div class="strip">
+  <div class="item"><div class="ico">📅</div><div class="k">Data</div><div class="v">20 de Junho 2026</div></div>
+  <div class="item"><div class="ico">⚽</div><div class="k">Escalão</div><div class="v">Sub-13 (9x9)</div></div>
+  <div class="item"><div class="ico">🏟</div><div class="k">Campos</div><div class="v">2 em simultâneo</div></div>
+  <div class="item"><div class="ico">⏱</div><div class="k">Jogos</div><div class="v">25 min corridos</div></div>
+  <div class="item"><div class="ico">🏆</div><div class="k">Equipas</div><div class="v">12 · 3 grupos</div></div>
+</div>
+
+<div class="section-title">O Torneio</div>
+<p>O Torneio Terras da Nóbrega é uma iniciativa da <b>AD Ponte da Barca</b> de promoção do desporto juvenil e valorização da identidade local. A edição de 2026 reúne 12 equipas de todo o Norte de Portugal — e além-fronteiras — num dia dedicado à formação, ao fair-play e ao convívio entre atletas.</p>
+<p>A manhã é dedicada à fase de grupos, com 18 jogos em dois campos em simultâneo. Depois da pausa para almoço, a tarde traz as meias-finais, os jogos de classificação e a grande final às 17h00.</p>
+<div class="grid-3" style="margin-top:20px">
+  <div class="card" style="text-align:center"><div style="font-size:30px">🏃</div><b>Desenvolvimento Desportivo</b><p style="margin:6px 0 0;font-size:14px;color:var(--muted)">Competição estruturada para jovens atletas</p></div>
+  <div class="card" style="text-align:center"><div style="font-size:30px">🤝</div><b>Fair-Play</b><p style="margin:6px 0 0;font-size:14px;color:var(--muted)">Prémio coletivo dedicado ao espírito desportivo</p></div>
+  <div class="card" style="text-align:center"><div style="font-size:30px">🎉</div><b>Convívio</b><p style="margin:6px 0 0;font-size:14px;color:var(--muted)">Festa do futebol jovem em Ponte da Barca</p></div>
+</div>
+<script>
+const target=new Date('2026-06-20T09:00:00+01:00').getTime();
+function tick(){
+  let d=target-Date.now(); if(d<0)d=0;
+  document.getElementById('cd-d').textContent=Math.floor(d/864e5);
+  document.getElementById('cd-h').textContent=Math.floor(d%864e5/36e5);
+  document.getElementById('cd-m').textContent=Math.floor(d%36e5/6e4);
+  document.getElementById('cd-s').textContent=Math.floor(d%6e4/1e3);
+}
+tick();setInterval(tick,1000);
+</script>
+
+</main>
+<footer><div class="foot-inner">
+  <img src="assets/adpb.png" alt="AD Ponte da Barca">
+  <div>Torneio Terras da Nóbrega 2026<br>Organização: AD Ponte da Barca</div>
+  <div class="foot-right">
+    <a href="mailto:torneio.terrasdanobrega@gmail.com">torneio.terrasdanobrega@gmail.com</a><br>
+    <a href="https://www.instagram.com/terrasdanobregacup" target="_blank" rel="noopener">Instagram @terrasdanobregacup</a>
+  </div>
+</div></footer>
+</body>
+</html>
