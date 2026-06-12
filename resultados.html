@@ -28,10 +28,8 @@ nav a:hover,nav a.ativo{background:rgba(0,0,0,.18)}
 main{max-width:1000px;margin:14px auto 50px;padding:0 14px}
 .painel{display:none}.painel.ativo{display:block}
 .seccao-titulo{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;letter-spacing:1px;color:var(--vermelho);margin:22px 0 10px;border-bottom:3px solid var(--dourado);display:inline-block;padding-bottom:2px}
-
-/* JOGO */
 .jogo{background:#fff;border-radius:10px;padding:10px 14px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-.jogo .meta{font-size:.72rem;color:var(--cinza);margin-bottom:4px;display:flex;gap:10px}
+.jogo .meta{font-size:.72rem;color:var(--cinza);margin-bottom:4px;display:flex;gap:10px;flex-wrap:wrap}
 .jogo .meta span{background:#F3F4F6;border-radius:4px;padding:1px 6px}
 .jogo .linha{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
 .jogo .eq{font-weight:600;font-size:.95rem}
@@ -39,9 +37,6 @@ main{max-width:1000px;margin:14px auto 50px;padding:0 14px}
 .jogo .res{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;min-width:84px;text-align:center;background:var(--navy);color:#fff;border-radius:6px;padding:3px 10px}
 .jogo .res.pendente{background:#E5E7EB;color:#9CA3AF;font-size:1.1rem}
 .jogo .pens{text-align:center;font-size:.78rem;color:var(--cinza);margin-top:4px}
-.jogo .rotulo-ff{font-family:'Bebas Neue',sans-serif;letter-spacing:1px;color:var(--dourado);font-size:.95rem;margin-bottom:4px}
-
-/* TABELAS */
 table{width:100%;border-collapse:collapse;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.08);margin-bottom:20px}
 th{background:var(--navy);color:#fff;font-size:.74rem;text-transform:uppercase;letter-spacing:.5px;padding:9px 6px}
 td{padding:9px 6px;font-size:.9rem;border-bottom:1px solid #EEE;text-align:center}
@@ -49,8 +44,6 @@ td.nome{text-align:left;font-weight:600;padding-left:12px}
 tr.apurado td{background:#FDF6E3}
 tr.apurado td.nome::after{content:" ★";color:var(--dourado)}
 .legenda{font-size:.75rem;color:var(--cinza);margin:-12px 0 20px}
-
-/* FASE FINAL */
 .cartao-final{background:linear-gradient(135deg,var(--navy),#1F3460);color:#fff;border-radius:12px;padding:16px;margin-bottom:10px}
 .cartao-final .rot{font-family:'Bebas Neue',sans-serif;color:var(--dourado);letter-spacing:1.5px;font-size:1.05rem}
 .cartao-final .meta-ff{font-size:.72rem;color:#8fa0be;margin-bottom:8px}
@@ -68,10 +61,7 @@ tr.apurado td.nome::after{content:" ★";color:var(--dourado)}
 footer{background:var(--navy);color:#C9CFDB;text-align:center;padding:26px 16px;font-size:.85rem}
 footer img{height:46px;margin-bottom:8px}
 footer a{color:var(--dourado)}
-@media(max-width:560px){
-  .jogo .eq{font-size:.82rem}
-  .jogo .res{font-size:1.2rem;min-width:64px}
-}
+@media(max-width:560px){.jogo .eq{font-size:.82rem}.jogo .res{font-size:1.2rem;min-width:64px}}
 </style>
 </head>
 <body>
@@ -83,14 +73,10 @@ footer a{color:var(--dourado)}
   </div>
 </header>
 <nav>
-  <a href="index.html">Início</a>
-  <a href="historia.html">História</a>
-  <a href="edicao-2026.html">Edição 2026</a>
-  <a href="resultados.html" class="ativo">Resultados</a>
-  <a href="regulamento.html">Regulamento</a>
-  <a href="informacoes.html">Informações Úteis</a>
-  <a href="onde-comer.html">Onde Comer</a>
-  <a href="parceiros.html">Parceiros</a>
+  <a href="index.html">Início</a><a href="historia.html">História</a>
+  <a href="edicao-2026.html">Edição 2026</a><a href="resultados.html" class="ativo">Resultados</a>
+  <a href="regulamento.html">Regulamento</a><a href="informacoes.html">Informações Úteis</a>
+  <a href="onde-comer.html">Onde Comer</a><a href="parceiros.html">Parceiros</a>
   <a href="contactos.html">Contactos</a>
 </nav>
 <div class="barra">
@@ -100,10 +86,7 @@ footer a{color:var(--dourado)}
     <button class="tab" data-tab="fasefinal">Fase Final</button>
     <button class="tab" data-tab="geral">Class. Geral</button>
   </div>
-  <div class="refresh">
-    <span id="ultima-att"></span>
-    <button onclick="carregar()">↻ Atualizar</button>
-  </div>
+  <div class="refresh"><span id="ultima-att"></span><button onclick="carregar()">↻ Atualizar</button></div>
 </div>
 <main>
   <div id="painel-jogos" class="painel ativo"><div class="estado">A carregar resultados…</div></div>
@@ -113,9 +96,8 @@ footer a{color:var(--dourado)}
 </main>
 <footer>
   <img src="assets/adpb.png" alt="AD Ponte da Barca"><br>
-  Torneio Terras da Nóbrega 2026<br>Organização: AD Ponte da Barca<br>
-  torneio.terrasdanobrega@gmail.com<br>
-  <a href="https://www.instagram.com/terrasdanobregacup">Instagram @terrasdanobregacup</a>
+  Torneio Terras da Nóbrega 2026 · Organização: AD Ponte da Barca<br>
+  torneio.terrasdanobrega@gmail.com · <a href="https://www.instagram.com/terrasdanobregacup">Instagram @terrasdanobregacup</a>
 </footer>
 <script>
 const SB_URL="https://rqbqawqtwtivvnvdvmbj.supabase.co";
@@ -124,8 +106,7 @@ let EQUIPAS={},JOGOS=[];
 
 async function sbGet(p){
   const r=await fetch(`${SB_URL}/rest/v1/${p}`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
-  if(!r.ok) throw new Error();
-  return r.json();
+  if(!r.ok)throw new Error();return r.json();
 }
 async function carregar(){
   try{
@@ -162,36 +143,85 @@ function calcularGrupo(g){
   });
   return lista;
 }
+
+function rankCriterio(s){
+  return[s.pts,(s.gm-s.gs),s.gm,-s.gs];
+}
+function cmpRank(a,b){
+  const ra=rankCriterio(a),rb=rankCriterio(b);
+  for(let i=0;i<ra.length;i++){if(rb[i]!==ra[i])return rb[i]-ra[i];}
+  return 0;
+}
+
 function grupoCompleto(g){return JOGOS.filter(j=>j.fase==="grupo"&&j.grupo===g).every(j=>j.golos_casa!==null&&j.golos_fora!==null);}
 function faseGruposCompleta(){return["A","B","C"].every(grupoCompleto);}
-function melhorSegundo(){
+
+/* Retorna objeto com todos os apurados */
+function calcularApuramento(){
   if(!faseGruposCompleta())return null;
-  const s=["A","B","C"].map(g=>calcularGrupo(g)[1]);
-  s.sort((a,b)=>{if(b.pts!==a.pts)return b.pts-a.pts;const da=a.gm-a.gs,db=b.gm-b.gs;if(db!==da)return db-da;if(b.gm!==a.gm)return b.gm-a.gm;return a.gs-b.gs;});
-  return s[0];
+  const grupos={};
+  ["A","B","C"].forEach(g=>{grupos[g]=calcularGrupo(g);});
+
+  const primeiros=["A","B","C"].map(g=>({...grupos[g][0],grupo:g}));
+  const segundos=["A","B","C"].map(g=>({...grupos[g][1],grupo:g}));
+  const terceiros=["A","B","C"].map(g=>({...grupos[g][2],grupo:g}));
+  const quartos=["A","B","C"].map(g=>({...grupos[g][3],grupo:g}));
+
+  segundos.sort(cmpRank);
+  terceiros.sort(cmpRank);
+  quartos.sort(cmpRank);
+
+  const melhor2=segundos[0];
+  const outros2=segundos.slice(1); // 2 equipas → jogo 5º/6º
+
+  const melhores3=terceiros.slice(0,2); // jogo 7º/8º
+  const pior3=terceiros[2];             // jogo 9º/10º (par com melhor 4º)
+
+  const melhor4=quartos[0];             // jogo 9º/10º
+  const piores4=quartos.slice(1);       // jogo 11º/12º
+
+  // MF1: 1ºA vs melhor2; MF2: 1ºB vs 1ºC
+  const mf1={casa:primeiros.find(p=>p.grupo==="A").eq, fora:melhor2.eq};
+  const mf2={casa:primeiros.find(p=>p.grupo==="B").eq, fora:primeiros.find(p=>p.grupo==="C").eq};
+
+  return{
+    mf1, mf2,
+    j56:{casa:outros2[0].eq, fora:outros2[1].eq},
+    j78:{casa:melhores3[0].eq, fora:melhores3[1].eq},
+    j910:{casa:pior3.eq, fora:melhor4.eq},
+    j1112:{casa:piores4[0].eq, fora:piores4[1].eq},
+  };
+}
+
+function melhorSegundo(){
+  const ap=calcularApuramento();
+  return ap?{eq:ap.mf1.fora}:null;
 }
 
 /* ---- RESOLVER EQUIPAS FASE FINAL ---- */
-function resolverMeia(j){
-  let c=j.equipa_casa_id?EQUIPAS[j.equipa_casa_id]:null;
-  let f=j.equipa_fora_id?EQUIPAS[j.equipa_fora_id]:null;
-  if(faseGruposCompleta()){
-    const m2=melhorSegundo();
-    if(j.rotulo==="Meia-Final 1"){c=c||calcularGrupo("A")[0].eq;f=f||m2.eq;}
-    if(j.rotulo==="Meia-Final 2"){c=c||calcularGrupo("B")[0].eq;f=f||calcularGrupo("C")[0].eq;}
-  }
-  return{casa:c,fora:f};
-}
 function resolverJogo(j){
   if(j.fase==="grupo")return{casa:EQUIPAS[j.equipa_casa_id],fora:EQUIPAS[j.equipa_fora_id]};
-  if(j.fase==="meia")return resolverMeia(j);
+  const ap=calcularApuramento();
+
+  // Se já tem equipas gravadas na BD, usa essas
   let c=j.equipa_casa_id?EQUIPAS[j.equipa_casa_id]:null;
   let f=j.equipa_fora_id?EQUIPAS[j.equipa_fora_id]:null;
+
+  if(ap){
+    if(j.rotulo==="Meia-Final 1"){c=c||ap.mf1.casa;f=f||ap.mf1.fora;}
+    if(j.rotulo==="Meia-Final 2"){c=c||ap.mf2.casa;f=f||ap.mf2.fora;}
+    if(j.rotulo==="5º/6º Lugar"){c=c||ap.j56.casa;f=f||ap.j56.fora;}
+    if(j.rotulo==="7º/8º Lugar"){c=c||ap.j78.casa;f=f||ap.j78.fora;}
+    if(j.rotulo==="9º/10º Lugar"){c=c||ap.j910.casa;f=f||ap.j910.fora;}
+    if(j.rotulo==="11º/12º Lugar"){c=c||ap.j1112.casa;f=f||ap.j1112.fora;}
+  }
+
+  // Fase final depende de meias
   const mf1=JOGOS.find(x=>x.rotulo==="Meia-Final 1");
   const mf2=JOGOS.find(x=>x.rotulo==="Meia-Final 2");
   const vp=m=>{
     if(!m||m.golos_casa===null||m.golos_fora===null)return[null,null];
-    const r=resolverMeia(m);if(!r.casa||!r.fora)return[null,null];
+    const r=resolverJogo(m);if(!r.casa||!r.fora)return[null,null];
     if(m.golos_casa>m.golos_fora)return[r.casa,r.fora];
     if(m.golos_casa<m.golos_fora)return[r.fora,r.casa];
     if(m.pen_casa!==null&&m.pen_fora!==null)return m.pen_casa>m.pen_fora?[r.casa,r.fora]:[r.fora,r.casa];
@@ -201,6 +231,7 @@ function resolverJogo(j){
   if(j.fase==="3lugar"){const[,p1]=vp(mf1);const[,p2]=vp(mf2);c=c||p1;f=f||p2;}
   return{casa:c,fora:f};
 }
+
 function vencedorJogo(j){
   if(j.golos_casa===null||j.golos_fora===null)return null;
   const r=resolverJogo(j);if(!r.casa||!r.fora)return null;
@@ -234,9 +265,8 @@ function renderJogos(){
       const r=resolverJogo(j);
       html+=`<div class="jogo">
         <div class="meta"><span>Jogo ${j.ordem}</span><span>⏰ ${j.hora||"—"}</span><span>🏟 Campo ${j.campo||"—"}</span></div>
-        <div class="linha">
-          <div class="eq casa">${r.casa.nome}</div>${htmlRes(j)}<div class="eq">${r.fora.nome}</div>
-        </div></div>`;
+        <div class="linha"><div class="eq casa">${r.casa.nome}</div>${htmlRes(j)}<div class="eq">${r.fora.nome}</div></div>
+      </div>`;
     });
   });
   html+=`<div class="seccao-titulo">Fase Final</div>`;
@@ -244,9 +274,8 @@ function renderJogos(){
     const r=resolverJogo(j);
     html+=`<div class="jogo">
       <div class="meta"><span>Jogo ${j.ordem}</span><span>⏰ ${j.hora||"—"}</span><span>🏟 Campo ${j.campo||"—"}</span>${j.rotulo?`<span>${j.rotulo}</span>`:""}</div>
-      <div class="linha">
-        <div class="eq casa">${nomeOu(r.casa,j.desc_casa)}</div>${htmlRes(j)}<div class="eq">${nomeOu(r.fora,j.desc_fora)}</div>
-      </div>${htmlPens(j)}</div>`;
+      <div class="linha"><div class="eq casa">${nomeOu(r.casa,j.desc_casa)}</div>${htmlRes(j)}<div class="eq">${nomeOu(r.fora,j.desc_fora)}</div></div>
+      ${htmlPens(j)}</div>`;
   });
   document.getElementById("painel-jogos").innerHTML=html;
 }
@@ -254,14 +283,15 @@ function renderJogos(){
 /* ---- RENDER CLASSIFICAÇÃO ---- */
 function renderClassificacao(){
   let html="";
-  const m2=melhorSegundo();
+  const ap=calcularApuramento();
+  const melhor2id=ap?ap.mf1.fora.id:null;
   ["A","B","C"].forEach(g=>{
     const lista=calcularGrupo(g);
     html+=`<div class="seccao-titulo">Grupo ${g}</div>
     <table><tr><th>#</th><th style="text-align:left">Equipa</th><th>J</th><th>V</th><th>E</th><th>D</th><th>GM</th><th>GS</th><th>DG</th><th>Pts</th></tr>`;
     lista.forEach((s,i)=>{
-      const ap=faseGruposCompleta()&&(i===0||(m2&&s.eq.id===m2.eq.id));
-      html+=`<tr class="${ap?"apurado":""}"><td>${i+1}º</td><td class="nome">${s.eq.nome}</td>
+      const apurado=ap&&(i===0||(melhor2id&&s.eq.id===melhor2id));
+      html+=`<tr class="${apurado?"apurado":""}"><td>${i+1}º</td><td class="nome">${s.eq.nome}</td>
         <td>${s.j}</td><td>${s.v}</td><td>${s.e}</td><td>${s.d}</td>
         <td>${s.gm}</td><td>${s.gs}</td><td>${s.gm-s.gs}</td><td><b>${s.pts}</b></td></tr>`;
     });
@@ -316,7 +346,6 @@ function renderGeral(){
 }
 
 function renderizar(){renderJogos();renderClassificacao();renderFaseFinal();renderGeral();}
-
 document.querySelectorAll(".tab").forEach(t=>{
   t.addEventListener("click",()=>{
     document.querySelectorAll(".tab").forEach(x=>x.classList.remove("ativa"));
