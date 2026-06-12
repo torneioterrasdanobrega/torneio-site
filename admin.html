@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin — Torneio Terras da Nóbrega 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--vermelho:#C8102E;--navy:#14213D;--dourado:#C9A227;--fundo:#F5F5F2}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Barlow',sans-serif;background:var(--fundo);color:var(--navy)}
+header{background:var(--navy);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:14px}
+header img{height:48px}
+header h1{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px}
+header p{font-size:.78rem;color:#C9CFDB}
+main{max-width:760px;margin:20px auto 60px;padding:0 14px}
+
+/* LOGIN */
+.login{background:#fff;border-radius:12px;padding:30px;max-width:380px;margin:60px auto;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.login h2{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:1px;margin-bottom:14px}
+.login input{width:100%;padding:11px;border:2px solid #DDD;border-radius:8px;font-size:1rem;margin-bottom:12px;text-align:center}
+.login button{width:100%;padding:11px;border:none;border-radius:8px;background:var(--vermelho);color:#fff;font-weight:700;font-size:1rem;cursor:pointer}
+.login .erro{color:var(--vermelho);font-size:.85rem;margin-top:10px;display:none}
+
+/* PAINEL */
+.seccao-titulo{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;letter-spacing:1px;color:var(--vermelho);margin:24px 0 10px;border-bottom:3px solid var(--dourado);display:inline-block}
+.jogo{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.jogo .rot{font-family:'Bebas Neue',sans-serif;color:var(--dourado);letter-spacing:1px;font-size:.95rem}
+.jogo .linha{display:grid;grid-template-columns:1fr 54px 16px 54px 1fr;gap:8px;align-items:center;margin-top:6px}
+.jogo .eq{font-weight:600;font-size:.88rem}
+.jogo .eq.casa{text-align:right}
+.jogo input[type=number]{width:54px;padding:8px 4px;text-align:center;font-size:1.1rem;font-weight:700;border:2px solid #DDD;border-radius:8px}
+.jogo .x{text-align:center;color:#999;font-weight:700}
+.jogo .acoes{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.jogo .acoes button{padding:8px 14px;border:none;border-radius:8px;font-weight:700;cursor:pointer;font-size:.85rem}
+.btn-guardar{background:var(--navy);color:#fff}
+.btn-limpar{background:#E5E7EB;color:var(--navy)}
+.jogo .pens-area{margin-top:8px;display:flex;gap:8px;align-items:center;font-size:.82rem;flex-wrap:wrap}
+.jogo select{padding:8px;border:2px solid #DDD;border-radius:8px;font-size:.85rem;max-width:100%}
+.jogo .estado{font-size:.8rem;margin-top:6px;min-height:1em}
+.ok{color:#15803D}.erro-msg{color:var(--vermelho)}
+.guardado{border-left:5px solid #15803D}
+.nota{font-size:.8rem;color:#6B7280;margin-bottom:16px}
+.topo-acoes{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.topo-acoes button{padding:8px 14px;border:none;border-radius:8px;background:#E5E7EB;font-weight:700;cursor:pointer}
+</style>
+</head>
+<body>
+
+<header>
+  <img src="assets/crest.png" alt="Emblema">
+  <div>
+    <h1>PAINEL ADMIN — RESULTADOS</h1>
+    <p>Torneio Terras da Nóbrega 2026</p>
+  </div>
+</header>
+
+<main>
+  <div id="login" class="login">
+    <h2>Acesso Restrito</h2>
+    <input type="password" id="pass" placeholder="Password" onkeydown="if(event.key==='Enter')entrar()">
+    <button onclick="entrar()">Entrar</button>
+    <div class="erro" id="login-erro">Password incorreta.</div>
+  </div>
+
+  <div id="painel" style="display:none">
+    <div class="topo-acoes">
+      <p class="nota">Insere o resultado e carrega em <b>Guardar</b>. As classificações e eliminatórias atualizam automaticamente no site.</p>
+      <button onclick="sair()">Sair</button>
+    </div>
+    <div id="lista"></div>
+  </div>
+</main>
+
+<script>
+const SB_URL = "https://rqbqawqtwtivvnvdvmbj.supabase.co";
+const SB_KEY = "sb_publishable_IG0LApCfH0fTYDhcm0PeaA_xRvjSJRU";
+let PASS = sessionStorage.getItem("ttn_pass") || "";
+let EQUIPAS = {}, JOGOS = [];
+
+async function sbGet(path){
+  const r = await fetch(`${SB_URL}/rest/v1/${path}`,{headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`}});
+  return r.json();
+}
+async function sbRpc(fn, body){
+  const r = await fetch(`${SB_URL}/rest/v1/rpc/${fn}`,{
+    method:"POST",
+    headers:{apikey:SB_KEY,Authorization:`Bearer ${SB_KEY}`,"Content-Type":"application/json"},
+    body:JSON.stringify(body)
+  });
+  if(!r.ok){ const e = await r.json().catch(()=>({})); throw new Error(e.message||"Erro"); }
+  return r.json();
+}
+
+async function entrar(){
+  const p = document.getElementById("pass").value.trim();
+  if(!p) return;
+  // valida a password no servidor com uma chamada inócua (jogo inexistente)
+  try{
+    await sbRpc("admin_update_jogo",{p_pass:p,p_jogo_id:-1,p_golos_casa:0,p_golos_fora:0});
+    PASS = p; sessionStorage.setItem("ttn_pass",p);
+    iniciar();
+  }catch(e){
+    if(e.message.includes("Password")){
+      document.getElementById("login-erro").style.display="block";
+    }else{
+      // jogo -1 não existe mas password passou — entra na mesma
+      PASS = p; sessionStorage.setItem("ttn_pass",p);
+      iniciar();
+    }
+  }
+}
+function sair(){ sessionStorage.removeItem("ttn_pass"); location.reload(); }
+
+async function iniciar(){
+  document.getElementById("login").style.display="none";
+  document.getElementById("painel").style.display="block";
+  const [eqs,jgs] = await Promise.all([sbGet("equipas?select=*&order=id"),sbGet("jogos?select=*&order=ordem")]);
+  EQUIPAS={}; eqs.forEach(e=>EQUIPAS[e.id]=e);
+  JOGOS=jgs;
+  render();
+}
+
+function nomeJogo(j, lado){
+  const id = lado==="casa"?j.equipa_casa_id:j.equipa_fora_id;
+  if(id) return EQUIPAS[id].nome_curto;
+  return (lado==="casa"?j.desc_casa:j.desc_fora)||"A definir";
+}
+
+function render(){
+  const alvo = document.getElementById("lista");
+  let html = "";
+  const seccoes = [
+    ["Grupo A", j=>j.fase==="grupo"&&j.grupo==="A"],
+    ["Grupo B", j=>j.fase==="grupo"&&j.grupo==="B"],
+    ["Grupo C", j=>j.fase==="grupo"&&j.grupo==="C"],
+    ["Fase Final", j=>j.fase!=="grupo"]
+  ];
+  seccoes.forEach(([titulo,filtro])=>{
+    html += `<div class="seccao-titulo">${titulo}</div>`;
+    JOGOS.filter(filtro).forEach(j=>{
+      const temResultado = j.golos_casa!==null;
+      const ehFinalFase = j.fase!=="grupo";
+      const ehClass = j.fase==="class";
+      html += `<div class="jogo ${temResultado?'guardado':''}" id="jogo-${j.id}">
+        ${j.rotulo?`<div class="rot">Jogo ${j.ordem} · ${j.rotulo}</div>`:`<div class="rot">Jogo ${j.ordem}</div>`}`;
+
+      if(ehClass){
+        const opts = id=>Object.values(EQUIPAS).map(e=>
+          `<option value="${e.id}" ${e.id===id?"selected":""}>${e.nome_curto}</option>`).join("");
+        html += `<div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center">
+          <select id="sel-casa-${j.id}"><option value="">— equipa casa —</option>${opts(j.equipa_casa_id)}</select>
+          <span style="color:#999;font-weight:700">vs</span>
+          <select id="sel-fora-${j.id}"><option value="">— equipa fora —</option>${opts(j.equipa_fora_id)}</select>
+          <button class="btn-guardar" style="padding:8px 12px;border:none;border-radius:8px;color:#fff;font-weight:700;cursor:pointer" onclick="guardarEquipas(${j.id})">Definir equipas</button>
+        </div>`;
+      }
+
+      html += `<div class="linha">
+          <div class="eq casa">${nomeJogo(j,"casa")}</div>
+          <input type="number" min="0" id="gc-${j.id}" value="${j.golos_casa??""}" placeholder="–">
+          <div class="x">×</div>
+          <input type="number" min="0" id="gf-${j.id}" value="${j.golos_fora??""}" placeholder="–">
+          <div class="eq">${nomeJogo(j,"fora")}</div>
+        </div>`;
+
+      if(ehFinalFase){
+        html += `<div class="pens-area">
+          <span>G. penalidades (se empate):</span>
+          <input type="number" min="0" id="pc-${j.id}" value="${j.pen_casa??""}" placeholder="–">
+          <span>×</span>
+          <input type="number" min="0" id="pf-${j.id}" value="${j.pen_fora??""}" placeholder="–">
+        </div>`;
+      }
+
+      html += `<div class="acoes">
+          <button class="btn-guardar" onclick="guardar(${j.id},${ehFinalFase})">Guardar</button>
+          <button class="btn-limpar" onclick="limpar(${j.id})">Limpar</button>
+        </div>
+        <div class="estado" id="estado-${j.id}"></div>
+      </div>`;
+    });
+  });
+  alvo.innerHTML = html;
+}
+
+function setEstado(id, msg, ok){
+  const el = document.getElementById("estado-"+id);
+  el.textContent = msg;
+  el.className = "estado " + (ok?"ok":"erro-msg");
+  if(ok) setTimeout(()=>{el.textContent="";},3000);
+}
+
+async function guardar(id, comPens){
+  const gc = document.getElementById("gc-"+id).value;
+  const gf = document.getElementById("gf-"+id).value;
+  if(gc===""||gf===""){ setEstado(id,"Preenche os dois resultados.",false); return; }
+  const body = {p_pass:PASS, p_jogo_id:id, p_golos_casa:+gc, p_golos_fora:+gf};
+  if(comPens){
+    const pc = document.getElementById("pc-"+id).value;
+    const pf = document.getElementById("pf-"+id).value;
+    body.p_pen_casa = pc===""?null:+pc;
+    body.p_pen_fora = pf===""?null:+pf;
+  }
+  try{
+    await sbRpc("admin_update_jogo", body);
+    setEstado(id,"✓ Guardado",true);
+    document.getElementById("jogo-"+id).classList.add("guardado");
+    const j = JOGOS.find(x=>x.id===id);
+    j.golos_casa=+gc; j.golos_fora=+gf;
+  }catch(e){ setEstado(id,"Erro: "+e.message,false); }
+}
+
+async function limpar(id){
+  try{
+    await sbRpc("admin_limpar_jogo",{p_pass:PASS,p_jogo_id:id});
+    document.getElementById("gc-"+id).value="";
+    document.getElementById("gf-"+id).value="";
+    const pc=document.getElementById("pc-"+id); if(pc) pc.value="";
+    const pf=document.getElementById("pf-"+id); if(pf) pf.value="";
+    document.getElementById("jogo-"+id).classList.remove("guardado");
+    setEstado(id,"✓ Resultado limpo",true);
+    const j = JOGOS.find(x=>x.id===id);
+    j.golos_casa=null; j.golos_fora=null;
+  }catch(e){ setEstado(id,"Erro: "+e.message,false); }
+}
+
+async function guardarEquipas(id){
+  const casa = document.getElementById("sel-casa-"+id).value;
+  const fora = document.getElementById("sel-fora-"+id).value;
+  if(!casa||!fora){ setEstado(id,"Seleciona as duas equipas.",false); return; }
+  if(casa===fora){ setEstado(id,"As equipas têm de ser diferentes.",false); return; }
+  try{
+    await sbRpc("admin_set_equipas_jogo",{p_pass:PASS,p_jogo_id:id,p_casa_id:+casa,p_fora_id:+fora});
+    setEstado(id,"✓ Equipas definidas",true);
+    const j = JOGOS.find(x=>x.id===id);
+    j.equipa_casa_id=+casa; j.equipa_fora_id=+fora;
+    render();
+  }catch(e){ setEstado(id,"Erro: "+e.message,false); }
+}
+
+if(PASS) iniciar();
+</script>
+</body>
+</html>
