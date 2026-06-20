@@ -139,13 +139,15 @@ function calcularGrupo(g){
       const h2h=jgs.find(j=>(j.equipa_casa_id===a.eq.id&&j.equipa_fora_id===b.eq.id)||(j.equipa_casa_id===b.eq.id&&j.equipa_fora_id===a.eq.id));
       if(h2h){const ga=h2h.equipa_casa_id===a.eq.id?h2h.golos_casa:h2h.golos_fora;const gb=h2h.equipa_casa_id===b.eq.id?h2h.golos_casa:h2h.golos_fora;if(ga!==gb)return gb-ga;}
     }
-    const da=a.gm-a.gs,db=b.gm-b.gs;if(db!==da)return db-da;if(b.gm!==a.gm)return b.gm-a.gm;if(a.gs!==b.gs)return a.gs-b.gs;return 0;
+    const da=a.gm-a.gs,db=b.gm-b.gs;if(db!==da)return db-da;if(b.gm!==a.gm)return b.gm-a.gm;if(a.gs!==b.gs)return a.gs-b.gs;
+    if((b.eq.desempate||0)!==(a.eq.desempate||0))return(b.eq.desempate||0)-(a.eq.desempate||0);
+    return 0;
   });
   return lista;
 }
 
 function rankCriterio(s){
-  return[s.pts,(s.gm-s.gs),s.gm,-s.gs];
+  return[s.pts,(s.gm-s.gs),s.gm,-s.gs,(s.eq&&s.eq.desempate)||0];
 }
 function cmpRank(a,b){
   const ra=rankCriterio(a),rb=rankCriterio(b);

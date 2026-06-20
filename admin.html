@@ -35,6 +35,23 @@ main{max-width:800px;margin:20px auto 60px;padding:0 14px}
 .ap-pendente{color:#9CA3AF;font-style:italic;font-size:.85rem}
 .ap-info{font-size:.78rem;color:#6B7280;margin-top:10px;background:#FDF6E3;border-radius:6px;padding:8px 10px}
 
+/* SORTEIO MANUAL */
+.sorteio{background:#FFF;border:2px solid var(--vermelho);border-radius:12px;padding:16px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.sorteio h3{font-family:'Bebas Neue',sans-serif;font-size:1.15rem;letter-spacing:1px;color:var(--vermelho);margin-bottom:6px}
+.sorteio .aviso{font-size:.82rem;color:#6B7280;margin-bottom:14px;line-height:1.4}
+.sorteio-bloco{background:var(--fundo);border-radius:8px;padding:12px;margin-bottom:12px}
+.sorteio-bloco .cab{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:8px}
+.sorteio-bloco .cab span{color:var(--vermelho)}
+.sorteio-linha{display:flex;align-items:center;gap:8px;background:#fff;border-radius:8px;padding:8px 10px;margin-bottom:6px}
+.sorteio-linha .pos{width:26px;height:26px;flex:none;display:flex;align-items:center;justify-content:center;background:var(--navy);color:#fff;border-radius:50%;font-weight:700;font-size:.8rem}
+.sorteio-linha .nm{flex:1;font-weight:600;font-size:.9rem}
+.sorteio-linha .setas{display:flex;gap:4px}
+.sorteio-linha .setas button{width:32px;height:32px;border:none;border-radius:6px;background:#E5E7EB;color:var(--navy);font-weight:700;font-size:1rem;cursor:pointer;line-height:1}
+.sorteio-linha .setas button:disabled{opacity:.3;cursor:default}
+.sorteio-bloco .gravar{margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sorteio-bloco .gravar button{padding:8px 16px;border:none;border-radius:8px;background:var(--vermelho);color:#fff;font-weight:700;cursor:pointer;font-size:.85rem}
+.sorteio-bloco .gravar .est{font-size:.8rem}
+
 /* JOGOS */
 .jogo{background:#fff;border-radius:10px;padding:14px;margin-bottom:10px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
 .jogo.guardado{border-left:5px solid var(--verde)}
@@ -112,7 +129,7 @@ async function recarregar(){
 }
 
 /* ---- LÓGICA APURAMENTO ---- */
-function rankCriterio(s){return[s.pts,(s.gm-s.gs),s.gm,-s.gs];}
+function rankCriterio(s){return[s.pts,(s.gm-s.gs),s.gm,-s.gs,(s.eq&&s.eq.desempate)||0];}
 function cmpRank(a,b){const ra=rankCriterio(a),rb=rankCriterio(b);for(let i=0;i<ra.length;i++){if(rb[i]!==ra[i])return rb[i]-ra[i];}return 0;}
 
 function calcularGrupo(g){
@@ -134,9 +151,40 @@ function calcularGrupo(g){
       const h2h=jgs.find(j=>(j.equipa_casa_id===a.eq.id&&j.equipa_fora_id===b.eq.id)||(j.equipa_casa_id===b.eq.id&&j.equipa_fora_id===a.eq.id));
       if(h2h){const ga=h2h.equipa_casa_id===a.eq.id?h2h.golos_casa:h2h.golos_fora;const gb=h2h.equipa_casa_id===b.eq.id?h2h.golos_casa:h2h.golos_fora;if(ga!==gb)return gb-ga;}
     }
-    const da=a.gm-a.gs,db=b.gm-b.gs;if(db!==da)return db-da;if(b.gm!==a.gm)return b.gm-a.gm;if(a.gs!==b.gs)return a.gs-b.gs;return 0;
+    const da=a.gm-a.gs,db=b.gm-b.gs;if(db!==da)return db-da;if(b.gm!==a.gm)return b.gm-a.gm;if(a.gs!==b.gs)return a.gs-b.gs;
+    // Critério 6: sorteio manual da organização (valor mais alto = melhor)
+    if((b.eq.desempate||0)!==(a.eq.desempate||0))return(b.eq.desempate||0)-(a.eq.desempate||0);
+    return 0;
   });
   return lista;
+}
+
+/* Deteta grupos de equipas que ficam EXATAMENTE iguais após todos os critérios
+   automáticos (excluindo o sorteio manual). Devolve uma lista de "blocos" de
+   empate, cada um com 2+ equipas que precisam de sorteio. */
+function automaticoIgual(a,b,jgs){
+  if(b.pts!==a.pts)return false;
+  // confronto direto só se forem exatamente 2 com os mesmos pontos no grupo
+  const da=a.gm-a.gs,db=b.gm-b.gs;
+  if(db!==da)return false;
+  if(b.gm!==a.gm)return false;
+  if(a.gs!==b.gs)return false;
+  // confronto direto entre os dois
+  const h2h=jgs.find(j=>(j.equipa_casa_id===a.eq.id&&j.equipa_fora_id===b.eq.id)||(j.equipa_casa_id===b.eq.id&&j.equipa_fora_id===a.eq.id));
+  if(h2h){const ga=h2h.equipa_casa_id===a.eq.id?h2h.golos_casa:h2h.golos_fora;const gb=h2h.equipa_casa_id===b.eq.id?h2h.golos_casa:h2h.golos_fora;if(ga!==gb)return false;}
+  return true;
+}
+
+function blocosEmpate(g){
+  const lista=calcularGrupo(g);
+  const jgs=JOGOS.filter(j=>j.fase==="grupo"&&j.grupo===g&&j.golos_casa!==null&&j.golos_fora!==null);
+  const blocos=[];let atual=[lista[0]];
+  for(let i=1;i<lista.length;i++){
+    if(automaticoIgual(lista[i-1],lista[i],jgs)){atual.push(lista[i]);}
+    else{if(atual.length>1)blocos.push(atual);atual=[lista[i]];}
+  }
+  if(atual.length>1)blocos.push(atual);
+  return blocos;
 }
 
 function grupoCompleto(g){return JOGOS.filter(j=>j.fase==="grupo"&&j.grupo===g).every(j=>j.golos_casa!==null&&j.golos_fora!==null);}
@@ -197,6 +245,79 @@ function renderApuramento(){
   }
   html+=`</div>`;
   box.innerHTML=html;
+  renderSorteio();
+}
+
+/* ---- SORTEIO MANUAL (critério 6) ---- */
+let SORTEIO_ORDEM={}; // grupo|idx -> [ids ordenados manualmente]
+
+function renderSorteio(){
+  let box=document.getElementById("sorteio-box");
+  if(!box){box=document.createElement("div");box.id="sorteio-box";document.getElementById("apuramento-box").after(box);}
+  let blocos=[];
+  ["A","B","C"].forEach(g=>{
+    if(!grupoCompleto(g))return;
+    blocosEmpate(g).forEach((bloco,i)=>{blocos.push({g,i,bloco});});
+  });
+  if(blocos.length===0){box.innerHTML="";return;}
+
+  let html=`<div class="sorteio">
+    <h3>🎲 Sorteio Manual Necessário</h3>
+    <p class="aviso">Há equipas <b>exatamente empatadas</b> após todos os critérios automáticos (pontos, confronto direto, diferença de golos, golos marcados e sofridos). Pelo Regulamento (critério 6), a ordem é definida por sorteio da organização. Define a ordem abaixo e grava — o site público e o apuramento passam a respeitá-la.</p>`;
+
+  blocos.forEach(({g,i,bloco})=>{
+    const chave=g+"|"+i;
+    // ordem inicial: a guardada manualmente (se já houver desempate>0) ou a ordem atual
+    if(!SORTEIO_ORDEM[chave]){
+      const ordenado=[...bloco].sort((a,b)=>(b.eq.desempate||0)-(a.eq.desempate||0));
+      SORTEIO_ORDEM[chave]=ordenado.map(x=>x.eq.id);
+    }
+    const ids=SORTEIO_ORDEM[chave];
+    html+=`<div class="sorteio-bloco">
+      <div class="cab">Grupo <span>${g}</span> — ${bloco.length} equipas empatadas (${bloco[0].pts} pts)</div>`;
+    ids.forEach((id,pos)=>{
+      const eq=EQUIPAS[id];
+      html+=`<div class="sorteio-linha">
+        <div class="pos">${pos+1}</div>
+        <div class="nm">${eq.nome_curto}</div>
+        <div class="setas">
+          <button onclick="moverSorteio('${chave}',${pos},-1)" ${pos===0?"disabled":""}>↑</button>
+          <button onclick="moverSorteio('${chave}',${pos},1)" ${pos===ids.length-1?"disabled":""}>↓</button>
+        </div>
+      </div>`;
+    });
+    html+=`<div class="gravar">
+      <button onclick="gravarSorteio('${chave}')">Gravar ordem</button>
+      <span class="est" id="sorteio-est-${g}-${i}"></span>
+    </div></div>`;
+  });
+  html+=`</div>`;
+  box.innerHTML=html;
+}
+
+function moverSorteio(chave,pos,dir){
+  const ids=SORTEIO_ORDEM[chave];
+  const novo=pos+dir;
+  if(novo<0||novo>=ids.length)return;
+  [ids[pos],ids[novo]]=[ids[novo],ids[pos]];
+  renderSorteio();
+}
+
+async function gravarSorteio(chave){
+  const ids=SORTEIO_ORDEM[chave];
+  const [g,i]=chave.split("|");
+  const est=document.getElementById(`sorteio-est-${g}-${i}`);
+  // valor mais alto = melhor: o 1º da lista recebe o valor mais alto
+  try{
+    for(let pos=0;pos<ids.length;pos++){
+      const valor=ids.length-pos; // 1º -> N, último -> 1
+      await sbRpc("admin_set_desempate",{p_pass:PASS,p_equipa_id:ids[pos],p_valor:valor});
+      EQUIPAS[ids[pos]].desempate=valor;
+    }
+    est.textContent="✓ Ordem gravada";est.className="est ok";
+    renderApuramento();
+    setTimeout(()=>{est.textContent="";},3000);
+  }catch(e){est.textContent="Erro: "+e.message;est.className="est erro-msg";}
 }
 
 /* ---- RENDER JOGOS ADMIN ---- */
